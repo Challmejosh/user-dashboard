@@ -6,6 +6,7 @@ import { AuthContext } from "../../Context/CreateContext/AuthContext";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../../../lib/firebase";
 import { toast } from "react-toastify";
+import { X } from "lucide-react";
 const Auth = () => {
   const [active, setActive] = useState<"register" | "login">("register");
   const [step, setStep] = useState<number>(1);
