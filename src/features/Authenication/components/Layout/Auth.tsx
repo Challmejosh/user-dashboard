@@ -1,7 +1,5 @@
-import { Apple, Facebook, X } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaGoogle } from "react-icons/fa";
 import LoginIcon from "../ui/loginIcon";
 import Form from "../Form";
 import { AuthContext } from "../../Context/CreateContext/AuthContext";
