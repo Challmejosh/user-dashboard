@@ -8,6 +8,8 @@ import { auth } from "../../../../lib/firebase";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
 import AppleSvg from "../../../../assets/apple.svg"
+import fbSvg from "../../../../assets/facebook-2-logo-svgrepo-com.svg"
+import googleSvg from "../../../../assets/google-color-svgrepo-com.svg"
 const Auth = () => {
   const [active, setActive] = useState<"register" | "login">("register");
   const [step, setStep] = useState<number>(1);
@@ -198,9 +200,9 @@ const Auth = () => {
         {step === 1 && (
           <div className="w-full flex items-center justify-start gap-2 ">
             <LoginIcon children={<img src={AppleSvg} alt="apple" className="object-contain w-[18px] h-[18px]" />} />
-            <LoginIcon click={handleFacebook} children={<img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="facebook" className="object-contain w-[18px] h-[18px]" />
+            <LoginIcon click={handleFacebook} children={<img src={fbSvg} alt="facebook" className="object-contain w-[18px] h-[18px]" />
 } />
-            <LoginIcon click={handleGoogle} children={<img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="google" className="object-contain w-[18px] h-[18px] "  />} />
+            <LoginIcon click={handleGoogle} children={<img src={googleSvg} alt="google" className="object-contain w-[18px] h-[18px] "  />} />
           </div>
         )}
 

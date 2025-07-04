@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../../../../lib/firebase";
 import { toast } from "react-toastify";
+import ToggleSideBar from "../ToggleSideBar";
 
 const UserLayout = ({children}:{children: React.ReactNode}) => {
     const [open,setOpen] = useState<boolean>(false)
@@ -35,8 +36,11 @@ const UserLayout = ({children}:{children: React.ReactNode}) => {
                 <SideBar />
                 <MobileSideBar />
                 <div className="w-full min-h-dvh h-dvh overflow-y-scroll p-3 sm:p-8 ">
-                    <div className="flex w-full items-center justify-end ">
-                        <p onClick={signout} className="cursor-pointer py-2 ">Sign Out</p>
+                    <div className="w-full flex items-center justify-between ">
+                        <ToggleSideBar />
+                        <div className="flex w-full items-center justify-end ">
+                            <p onClick={signout} className="cursor-pointer py-2 ">Sign Out</p>
+                        </div>
                     </div>
                     {children}
                 </div>

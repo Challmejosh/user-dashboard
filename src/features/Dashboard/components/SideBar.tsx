@@ -2,12 +2,17 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Settings,
   UserSquare2Icon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import MockProfile from "../../../assets/mock-profile.png";
 import { useEffect, useState } from "react";
+import settingImg from "../../../assets/setting 1.png"
+import keyImg from "../../../assets/key-square.png"
+import blockImg from "../../../assets/3d-square 1.png"
+import walletImg from "../../../assets/wallet-money 2.png"
+import promoteImg from "../../../assets/discount-shape 1.png"
+import helpImg from "../../../assets/message-question 1.png"
 const SideBar = () => {
   const [isShow, setIsShow] = useState<boolean>(true);
   const [name,setName] = useState("")
@@ -24,10 +29,7 @@ const SideBar = () => {
       },[])
   return (
     <div
-    //   style={{ width: isShow ? 
-    //     306
-    //      : 
-    //      100 }}
+
       className={` ${isShow?"w-[306px] ":"w-[100px] "} transition-all duration-500 transform relative bg-white  min-h-dvh p-4 hidden lg:flex flex-col items-center justify-between `}
     >
       {/* toggle button */}
@@ -50,7 +52,7 @@ const SideBar = () => {
       <div className={` transition-all duration-1000 transform w-full flex flex-col gap-3 items-start justify-start `}>
         {/* title */}
         <div className="w-full flex gap-2 py-1 px-4 items-center justify-center ">
-          <Settings size={isShow ? 24 : undefined} />
+          <img src={settingImg} alt="" />
           {isShow && (
             <div
               className={`w-full flex items-center justify-start `}
@@ -70,7 +72,7 @@ const SideBar = () => {
               " font-medium bg-[#5932EA] text-white "
             } text-[#9197B3] hover:text-white hover:bg-[#5932EA] transition-all transform text-[14px] w-full flex gap-2 items-center justify-start py-3 px-4 rounded-[8px] `}
           >
-            <UserSquare2Icon />
+            <img src={keyImg} alt="" />
             {isShow && <p className="capitalize">dashboard</p>}
           </Link>
           <Link
@@ -80,7 +82,7 @@ const SideBar = () => {
               "font-medium  bg-[#5932EA] text-white "
             }group text-[#9197B3] hover:text-white hover:bg-[#5932EA] transition-all transform text-[14px] w-full flex gap-2 items-center justify-start py-3 px-4 rounded-[8px] `}
           >
-            <UserSquare2Icon />
+            <img src={blockImg} alt="" />
             {isShow && (
               <div className="w-full flex items-center justify-between ">
                 <p className="capitalize">product</p>
@@ -110,7 +112,7 @@ const SideBar = () => {
               "font-medium bg-[#5932EA] text-white "
             } text-[#9197B3] hover:text-white hover:bg-[#5932EA] transition-all transform text-[14px] w-full flex gap-2 items-center justify-start py-3 px-4 rounded-[8px] `}
           >
-            <UserSquare2Icon />
+            <img src={walletImg} alt="" />
             {isShow && (
               <div className="w-full flex items-center justify-between ">
                 <p className="capitalize">income</p>
@@ -125,7 +127,7 @@ const SideBar = () => {
               "font-medium bg-[#5932EA] text-white "
             } text-[#9197B3] hover:text-white hover:bg-[#5932EA] transition-all transform text-[14px] w-full flex gap-2 items-center justify-start py-3 px-4 rounded-[8px] `}
           >
-            <UserSquare2Icon />
+            <img src={promoteImg} alt="" />
             {isShow && (
               <div className="w-full flex items-center justify-between ">
                 <p className="capitalize">promote</p>
@@ -140,7 +142,7 @@ const SideBar = () => {
               "font-medium bg-[#5932EA] text-white "
             } text-[#9197B3] hover:text-white hover:bg-[#5932EA] transition-all transform text-[14px] w-full flex gap-2 items-center justify-start py-3 px-4 rounded-[8px] `}
           >
-            <UserSquare2Icon />
+            <img src={helpImg} alt="" />
             {isShow && (
               <div className="w-full flex items-center justify-between ">
                 <p className="capitalize">help</p>
