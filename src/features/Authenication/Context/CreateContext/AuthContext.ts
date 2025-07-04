@@ -7,5 +7,6 @@ interface AuthType{
     signout: () => void
     googleAuth: ()=>Promise<string>
     facebookAuth: ()=>Promise<string>
+    user: UserType|null
 }
 export const AuthContext = createContext<AuthType>({} as AuthType)

@@ -3,8 +3,10 @@ import { AuthContext } from "../CreateContext/AuthContext";
 import { auth, faceBookProvider, googleProvider } from "../../../../lib/firebase";
 import type { UserType } from "../../Types";
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 const AuthProvider = ({children}:{children:React.ReactNode}) => {
+    const [user, setUser] = useState<UserType|null>(null)
     // Registration function
     const signup = async (email: string,password:string): Promise<UserType|string>=>{
             try{
@@ -34,6 +36,7 @@ const AuthProvider = ({children}:{children:React.ReactNode}) => {
                 uid: getRecord.user.uid,
                 email: String(getRecord.user.email)
             }
+            setUser(record)
             localStorage.setItem("user",JSON.stringify(getRecord))
             return record
         } catch (error: any) {
@@ -56,6 +59,11 @@ const AuthProvider = ({children}:{children:React.ReactNode}) => {
             const google = await signInWithPopup(auth, googleProvider)
             if(google){
                 localStorage.setItem("user",JSON.stringify(google))
+                const record: UserType = {
+                    uid: google.user.uid,
+                    email: String(google.user.email)
+                }
+                setUser(record)
              return "success"
             }
             return "success"
@@ -77,8 +85,15 @@ const AuthProvider = ({children}:{children:React.ReactNode}) => {
             return error?.message.split("/")[1]
         }
     }
+
+    useEffect(()=>{
+        const user = localStorage.getItem("user")
+        if(user){
+            setUser(JSON.parse(user))
+        }
+    },[])
     return ( 
-        <AuthContext.Provider value={{signin,signout,signup,googleAuth,facebookAuth}}>
+        <AuthContext.Provider value={{signin,signout,signup,googleAuth,facebookAuth,user}}>
             {children}
         </AuthContext.Provider>
      );

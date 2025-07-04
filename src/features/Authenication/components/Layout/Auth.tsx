@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import LoginIcon from "../ui/loginIcon";
 import Form from "../Form";
 import { AuthContext } from "../../Context/CreateContext/AuthContext";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../../../lib/firebase";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
 import AppleSvg from "../../../../assets/apple.svg"
@@ -17,7 +15,7 @@ const Auth = () => {
   const [loading,setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  const { signup,signin, googleAuth,facebookAuth } = useContext(AuthContext);
+  const { signup,signin, googleAuth,facebookAuth,user: currentUser } = useContext(AuthContext);
     // email and password authentication
     const handleAuth = async (
         e: React.FormEvent<HTMLFormElement>,
@@ -90,6 +88,7 @@ const Auth = () => {
             await setStep(1)
             setLoading(true)
             setActive("login");
+            setLoading(false)
             return;
         }
         }
@@ -130,13 +129,15 @@ const Auth = () => {
             toast.error(res)
         }
     }
+    const comingSoon = ()=>{
+        toast("Coming soon!")
+    }
     useEffect(()=>{
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                navigate("/customer")
-            } 
-        });
-    },[navigate])
+        if (currentUser) {
+            navigate("/customer")
+        }
+
+    },[navigate,currentUser])
   return (
     <div className="w-full bg-[#fbfbfb] flex items-center justify-center py-8 max-h-dvh min-h-dvh h-dvh ">
       <div
@@ -199,7 +200,7 @@ const Auth = () => {
         {/* socials auth */}
         {step === 1 && (
           <div className="w-full flex items-center justify-start gap-2 ">
-            <LoginIcon children={<img src={AppleSvg} alt="apple" className="object-contain w-[18px] h-[18px]" />} />
+            <LoginIcon click={comingSoon} children={<img src={AppleSvg} alt="apple" className="object-contain w-[18px] h-[18px]" />} />
             <LoginIcon click={handleFacebook} children={<img src={fbSvg} alt="facebook" className="object-contain w-[18px] h-[18px]" />
 } />
             <LoginIcon click={handleGoogle} children={<img src={googleSvg} alt="google" className="object-contain w-[18px] h-[18px] "  />} />
