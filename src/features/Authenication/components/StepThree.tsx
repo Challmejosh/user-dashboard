@@ -1,11 +1,13 @@
-import { Clock, DollarSign, MapPin, Search, Users2 } from "lucide-react"
+import {  ArrowLeft, Clock, DollarSign, MapPin, Search, Users2 } from "lucide-react"
 import { useEffect, useState } from "react"
 
 interface Prop{
     address: string
+    error: boolean
+    changeError: (value: boolean)=>void
     onChange: (key:"select"|"address"|"phone"|"fullName"|"birth",e?:React.ChangeEvent<HTMLInputElement>|React.ChangeEvent<HTMLSelectElement>,addressInput?:string)=>void
 }
-const StepThree = ({address,onChange}:Prop) => {
+const StepThree = ({address,onChange,error,changeError}:Prop) => {
     const [active,setActive] = useState<"one"|"two">("one")
     const [street,setStreet] = useState<string>("")
     const [apartment,setApartment] = useState<string>("")
@@ -26,19 +28,23 @@ const StepThree = ({address,onChange}:Prop) => {
     })
 }
     useEffect(()=>{
-        const addressInput = (street + apartment + city + state + zipcode)
+        const addressInput = `${street&&street + ","}${apartment && apartment + "," }${city&&city + ","}${state&&state + ","}${zipcode&&zipcode}`
         onChange("address",undefined,addressInput)
-    },[street,apartment,city,state,zipcode])
+    },[street,apartment,city,state,zipcode,onChange])
     return ( 
         <div className="flex flex-col items-start justify-between w-full h-full ">
             {active==="one"&&<div className="w-full h-full flex flex-col items-start justify-between">
                 <div className="w-full flex flex-col gap-8 items-start justify-between ">
                     <div className="w-full  ">
-                        <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-start ">
-                            <Search color="#1A071066" />
-                            <div className="w-full flex flex-col items-start justify-center ">
-                                <input value={address} placeholder="Search for address" onChange={(e: React.ChangeEvent<HTMLInputElement>)=>onChange("address",e)} title="address" name="address" type="text" className="w-full bg-transparent py-2 px-3 flex items-center justify-start focus:outline-none  " />
+                        <div className="">
+                            <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-start ">
+                                <Search color="#1A071066" />
+                                <div className="w-full flex flex-col items-start justify-center ">
+                                    <input value={address} placeholder="Search for address" onChange={(e: React.ChangeEvent<HTMLInputElement>)=>onChange("address",e)} title="address" name="address" type="text" className="w-full bg-transparent py-2 px-3 flex items-center justify-start focus:outline-none  " />
+                                </div>
                             </div>
+                            {error && !address.trim() && <p className="text-sm text-red-600">Fill your address</p> }
+                            {error && address.trim() && address.length < 6 && <p className="text-sm text-red-600">Fill your address</p> }
                         </div>
                         <p className="text-[#1A071066] text-sm ">Your address is not visible to other users</p>
                     </div>
@@ -47,7 +53,10 @@ const StepThree = ({address,onChange}:Prop) => {
                             <MapPin size={16} />
                             <p className="text-xs sm:text-md ">Use current location</p>
                         </div>
-                        <div onClick={()=>handleActive("two")} className="text-[#5932EA] w-fit px-[12px] flex gap-1 font-semibold items-center justify-start p-2 cursor-pointer rounded-2xl border border-[#EF498F47] ">
+                        <div onClick={()=>{
+                            changeError(false)
+                            handleActive("two")
+                        }} className="text-[#5932EA] w-fit px-[12px] flex gap-1 font-semibold items-center justify-start p-2 cursor-pointer rounded-2xl border border-[#EF498F47] ">
                             <p className="text-xs sm:text-md">Add manually</p>
                         </div>
                     </div>
@@ -71,41 +80,61 @@ const StepThree = ({address,onChange}:Prop) => {
                 </div>
             </div>}
             {active==="two"&&(
-                <div className="w-full flex flex-col gap-5 items-start justify-center ">
+                <div className="w-full my-6 flex flex-col gap-5 items-start justify-center ">
+                    {/* nav */}
+                    <ArrowLeft onClick={()=>{
+                        changeError(false)
+                        handleActive("one")
+                    }} />
                     {/* street */}
-                    <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
-                        <div className="w-full flex flex-col items-start justify-center ">
-                            <label htmlFor="street" className="text-[#1A0710A6] text-sm font-medium" >street address</label>
-                            <input value={street} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setStreet(e.target.value)} id="street" name="street" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                    <div className="w-full">
+                        <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
+                            <div className="w-full flex flex-col items-start justify-center ">
+                                <label htmlFor="street" className="text-[#1A0710A6] text-sm font-medium" >street address</label>
+                                <input value={street} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setStreet(e.target.value)} id="street" name="street" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                            </div>
                         </div>
+                        {error && !street.trim() && <p className="text-red-600 text-sm ">Fill out field</p>  }
                     </div>
                     {/* apartment */}
-                    <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
-                        <div className="w-full flex flex-col items-start justify-center ">
-                            <input value={apartment} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setApartment(e.target.value)} placeholder="Apartment" title="apartment" name="apartment" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                    <div className="w-full">
+                        <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
+                            <div className="w-full flex flex-col items-start justify-center ">
+                                <input value={apartment} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setApartment(e.target.value)} placeholder="Apartment" title="apartment" name="apartment" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                            </div>
+                            <p className="text-sm text-[#1A0710A6] ">optional</p>
                         </div>
-                        <p className="text-sm text-[#1A0710A6] ">optional</p>
+                        
                     </div>
                     {/* city */}
-                    <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
-                        <div className="w-full flex flex-col items-start justify-center ">
-                            <label htmlFor="city" className="text-[#1A0710A6] text-sm font-medium" >City</label>
-                            <input value={city} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setCity(e.target.value)} id="city" name="city" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                    <div className="w-full">
+                        <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
+                            <div className="w-full flex flex-col items-start justify-center ">
+                                <label htmlFor="city" className="text-[#1A0710A6] text-sm font-medium" >City</label>
+                                <input value={city} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setCity(e.target.value)} id="city" name="city" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                            </div>
                         </div>
+                        {error && !city.trim() && <p className="text-red-600 text-sm ">Fill out field</p>  }
                     </div>
                     {/* state and zipcode */}
                     <div className="w-full flex items-center justify-center gap-3 ">
-                        <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
-                            <div className="w-full flex flex-col items-start justify-center ">
-                                <label htmlFor="state" className="text-[#1A0710A6] text-sm font-medium" >State</label>
-                                <input value={state} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setState(e.target.value)} id="state" name="state" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                        <div className="w-full">
+                            <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
+                                <div className="w-full flex flex-col items-start justify-center ">
+                                    <label htmlFor="state" className="text-[#1A0710A6] text-sm font-medium" >State</label>
+                                    <input value={state} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setState(e.target.value)} id="state" name="state" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                                </div>
                             </div>
+                            {error && !state.trim() && <p className="text-red-600 text-sm ">Fill out field</p>  }
                         </div>
-                        <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
-                            <div className="w-full flex flex-col items-start justify-center ">
-                                <label htmlFor="zipcode" className="text-[#1A0710A6] text-sm font-medium" >Zip code</label>
-                                <input value={zipcode} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setZipcode(e.target.value)} id="zipcode" name="zipcode" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                        <div className="w-full">
+                            <div className="w-full h-[56px] border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
+                                <div className="w-full flex flex-col items-start justify-center ">
+                                    <label htmlFor="zipcode" className="text-[#1A0710A6] text-sm font-medium" >Zip code</label>
+                                    <input value={zipcode} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setZipcode(e.target.value)} id="zipcode" name="zipcode" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                                </div>
                             </div>
+                            {error && !zipcode.trim() && <p className="text-red-600 text-sm ">Fill out field</p>  }
                         </div>
                     </div>
                 </div>
