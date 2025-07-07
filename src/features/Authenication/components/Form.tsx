@@ -6,12 +6,13 @@ import StepFour from "./StepFour";
 import { toast } from "react-toastify";
 interface Prop{
     active: "register"|"login"
-    error:string
+    error:boolean
     step: number
+    changeError: (value: boolean)=>void
     loading: boolean
     onSubmit: (e: React.FormEvent<HTMLFormElement>,email:string,password:string, fullName:string,phone:string,birth:string,address:string)=>void
 }
-const Form = ({active,step,onSubmit,error,loading}:Prop) => {
+const Form = ({active,step,onSubmit,error,loading,changeError}:Prop) => {
     const [email,setEmail] = useState<string>("")
     const [password,setPassword] = useState<string>("")
     const [showPassword, setShowPassword] = useState(false);
@@ -61,14 +62,18 @@ const Form = ({active,step,onSubmit,error,loading}:Prop) => {
                 {active==="register"?<p className="text-sm text-[#1A071066] ">or register with email</p>
                 :<p className="text-sm text-[#1A071066] ">or login with email</p>}
                 <div className="w-full flex flex-col gap-4 items-start justify-center ">
-                    <div className="w-full border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
-                        <div className="w-full flex flex-col items-start justify-center ">
-                            <label htmlFor="email" className="text-[#1A0710A6] font-medium" >Email address</label>
-                            <input value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setEmail(e.target.value)} id="email" name="email" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                    <div className="w-full duration-300 transition-all transform">
+                        <div className="w-full border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
+                            <div className="w-full flex flex-col items-start justify-center ">
+                                <label htmlFor="email" className="text-[#1A0710A6] font-medium" >Email address</label>
+                                <input value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>setEmail(e.target.value)} id="email" name="email" type="text" className="w-full bg-transparent flex items-center justify-start focus:outline-none  " />
+                            </div>
+                            {email.trim() && email.includes("@") && <Check color="#6BC62D" /> }
                         </div>
-                        {email.trim() && email.includes("@") && <Check color="#6BC62D" /> }
+                        {error&&(!email.trim())&&<p className="text-red-600 duration-300 transition-all transform text-sm ">Email must not be empty</p>}
+                        {error&&(email.length>1 && !email.includes("@")  )&&<p className="text-red-600 duration-300 transition-all transform text-sm ">Email must include "@"</p>}
                     </div>
-                    <div className="w-full flex flex-col items-start justify-start ">
+                    <div className="w-full duration-300 transition-all transform flex flex-col items-start justify-start ">
                         <div className="w-full border border-[#DDDDDD] py-1 px-4 rounded-2xl flex items-center justify-between ">
                             <div className="w-full flex flex-col items-start justify-center ">
                                 <label htmlFor="password" className="text-[#1A0710A6] font-medium" >Password</label>
@@ -78,7 +83,8 @@ const Form = ({active,step,onSubmit,error,loading}:Prop) => {
                             {showPassword ? <Eye onClick={()=>setShowPassword(prev=>!prev)}className="cursor-pointer" /> 
                             : <EyeOff onClick={()=>setShowPassword(prev=>!prev)}className="cursor-pointer" /> }
                         </div>
-                        {active==="register"&&<p className="text-[#1A0710A6] text-sm ">8+ character</p>}
+                        {error && (password.length < 8 && password.trim() ) &&<p className="text-[#1A0710A6] duration-300 transition-all transform text-sm ">8+ character</p>}
+                        {error && (!password.trim()) &&<p className="text-red-600 duration-300 transition-all transform text-sm ">Fill out password </p>}
                     </div>
                 </div>
             </>}
@@ -89,6 +95,7 @@ const Form = ({active,step,onSubmit,error,loading}:Prop) => {
                 phone={phone}
                 select={select}
                 birth={birth}
+                error={error}
                 gender={gender}
                 onChange={handleChange}
                 />)
@@ -96,6 +103,8 @@ const Form = ({active,step,onSubmit,error,loading}:Prop) => {
             {/* step 3 */}
             {step===3&&(
                 <StepThree
+                error={error}
+                changeError={changeError}
                 address={address}
                 onChange={handleChange}
                 />
@@ -106,7 +115,7 @@ const Form = ({active,step,onSubmit,error,loading}:Prop) => {
             )}
             {/* submit button */}
             <div className={` ${step===4&&"p-6"} w-full flex flex-col items-center justify-center gap-2 `}>
-                <p className="text-red-600 text-sm ">{error}</p>
+                {/* <p className="text-red-600 text-sm ">{error}</p> */}
                 <button disabled={loading} type="submit" className="bg-[#5932EA] transform transition-all focus:outline-blue-600 duration-300 w-full px-[36px] py-3 rounded-[12px] flex items-center justify-center text-white cursor-pointer ">
                     {loading?"loading...":<>{step===1?<>{active==="register"?"Create account" : "Login to Dashboard"}</>:step===4?"Go to Login":"Save Information"}</>}
                 </button>
