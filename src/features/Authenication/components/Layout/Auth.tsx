@@ -11,7 +11,7 @@ import googleSvg from "../../../../assets/google-color-svgrepo-com.svg"
 const Auth = () => {
   const [active, setActive] = useState<"register" | "login">("register");
   const [step, setStep] = useState<number>(1);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<boolean>(false);
   const [loading,setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -31,18 +31,18 @@ const Auth = () => {
         // validating inputs
         if (!email.trim() || !email.includes("@")) {
         if (!email.includes("@")) {
-            setError('incorrect format "@" must be included  ');
+            setError(true)
         }
         if (!email.trim()) {
-            setError("email must not be empty");
+            setError(true);
         }
         return;
         }
         if (!password.trim() || password.length < 8) {
-        setError("password must be at least 8 characters");
+        setError(true);
         return;
         }
-        setError("");
+        setError(false);
         // register
         if (active === "register") {
             if (step === 1) {
@@ -55,7 +55,7 @@ const Auth = () => {
             }
             if (step === 2) {
                 if (!fullName.trim() || !phone.trim()) {
-                    setError("make sure all are field fill in");
+                    setError(true);
                     return;
                 }
                 setLoading(true)
@@ -67,12 +67,10 @@ const Auth = () => {
             }
             if (step === 3) {
                 if (!address.trim() || address.length < 8) {
-                    setError(
-                        "address not be empty and should be greater than 8 letters "
-                    );
+                    setError(true);
                     return;
                 }
-                setError("");
+                setError(false);
                 setLoading(true)
                 const res = await signup(email, password);
                 setLoading(false)
@@ -95,6 +93,7 @@ const Auth = () => {
         // login 
         if (active === "login") {
             setLoading(true)
+            setError(false)
             const res = await signin(email,password)
             setLoading(false)
             if(typeof res==="string"){
@@ -138,27 +137,29 @@ const Auth = () => {
         }
 
     },[navigate,currentUser])
+    const changeError = (value: boolean) => {
+        setError(value);
+    }
   return (
     <div className="w-full bg-[#fbfbfb] flex items-center justify-center py-8 max-h-dvh min-h-dvh h-dvh ">
-      <div
-        className={` ${
-          step === 4 && " p-0 overflow-hidden justify-start relative "
-        } ${
-          step !== 4 && "px-[24px] py-[16px]"
-        } w-[502px] h-full sm:rounded-[24px] bg-white flex flex-col gap-6 items-center ${
+      <div className={` ${
+          step === 4 && " p-0 overflow-hidden justify-start relative "} ${step !== 4 && "px-[24px] py-[16px]"} w-[502px] h-full sm:h-[592px] sm:rounded-[24px] bg-white flex flex-col gap-6 items-center shadow-2xl drop-shadow-[#5C636B14]  ${
           step !== 1 && step !== 4 && "justify-between "
         } ${active === "register" ? "justify-between" : "justify-start"}  `}
       >
+
         {/* nav */}
-        <div
-          className={` w-full flex items-center ${
+        <div className={` w-full flex items-center ${
             step !== 4 && " justify-between"
           } ${step === 4 && "justify-end absolute p-3 "}  `}
         >
           {step === 1 && (
             <div className=" flex gap-2 items-center justify-start ">
               <h2
-                onClick={() => setActive("register")}
+                onClick={() => {
+                  changeError(false)
+                  setActive("register")
+                }}
                 className={`${
                   active === "register" &&
                   "text-[#1A0710D9] border-b-[2px] border-b-[#EF498F] text-lg "
@@ -167,11 +168,14 @@ const Auth = () => {
                 register
               </h2>
               <h2
-                onClick={() => setActive("login")}
+                onClick={() => {
+                  changeError(false)
+                  setActive("login")
+                }}
                 className={`${
                   active === "login" &&
                   "text-[#1A0710D9] border-b-[2px] border-b-[#EF498F] text-l"
-                } cursor-pointer capitalize p-3 transform transition-all  `}
+                } cursor-pointer capitalize p-3 transform transition-all duration-300  `}
               >
                 Log In
               </h2>
@@ -208,7 +212,7 @@ const Auth = () => {
         )}
 
         {/* form */}
-        <Form loading={loading} error={error} step={step} active={active} onSubmit={handleAuth} />
+        <Form changeError={changeError} loading={loading} error={error} step={step} active={active} onSubmit={handleAuth} />
         {step === 1 && (
           <>
             {active === "register" && (
